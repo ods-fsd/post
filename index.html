@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Тест Google Apps Script POST</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 1rem;
+      background: #f4f4f4;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-family: monospace;
+      font-size: 14px;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    pre {
+      background: #222;
+      color: #eee;
+      padding: 1rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 1rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Відправка JSON на Google Apps Script</h1>
+  <label for="jsonInput">Встав сюди JSON:</label><br />
+  <textarea id="jsonInput">{"test": "hello"}</textarea><br />
+  <button id="sendBtn">Відправити POST-запит</button>
+
+  <h2>Відповідь сервера:</h2>
+  <pre id="responseOutput">Тут буде відповідь...</pre>
+
+  <script>
+    const sendBtn = document.getElementById('sendBtn');
+    const jsonInput = document.getElementById('jsonInput');
+    const responseOutput = document.getElementById('responseOutput');
+    const url = 'https://script.google.com/macros/s/AKfycbyN-aQsZhyEMnFN5AK1ofliclcnQKoQ3KXBRC247MTkzO22Z4HkVBemVILfQhBbZ-M-YA/exec';
+
+    sendBtn.addEventListener('click', () => {
+      let data;
+      try {
+        data = JSON.parse(jsonInput.value);
+      } catch (e) {
+        responseOutput.textContent = 'Помилка: Невірний JSON';
+        return;
+      }
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.text())
+      .then(text => {
+        responseOutput.textContent = text;
+      })
+      .catch(error => {
+        responseOutput.textContent = 'Помилка запиту: ' + error;
+      });
+    });
+  </script>
+</body>
+</html>
